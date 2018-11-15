@@ -9,6 +9,8 @@ int getBit(char *info, int num);
 
 void setBit(char *info, int num, int value);
 
+void keyGeneration(char *initialKey, char **keys);
+
 void IP(char *info);
 
 void IPinvert(char *info);
