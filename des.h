@@ -7,10 +7,10 @@ void DESdecode(char *info, int info_size, char *key);
 
 int getBit(char *info, int num);
 
-char *setBit(char *info, int info_size, int num, int value);
+void setBit(char *info, int num, int value);
 
-void IP(char *info, int info_size);
+void IP(char *info);
 
-void IPinvert(char *info, int info_size);
+void IPinvert(char *info);
 
 #endif

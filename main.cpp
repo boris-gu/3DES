@@ -2,6 +2,7 @@
 #include <cstring>
 
 #include "utility.h"
+#include "des.h"
 
 using namespace std;
 
@@ -25,6 +26,7 @@ int main(int argc, char *argv[])
                 cout << (int)info[i] << "\n";
             } */
             writeFile(argv[2], info, info_size);
+            DESencode(info, info_size, argv[3]);
         }
         else
         {

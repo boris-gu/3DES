@@ -27,12 +27,10 @@ char *readFile(const char *file_name, int &info_size, int &extra_bytes)
         file_size = file.tellg();                // записываем размер файла
         extra_bytes = (8 - (file_size % 8)) % 8; // узнаем кол-во доп. байтов
         info_size = file_size + extra_bytes;     // записываем размер информации
-        cout << info_size << "\n";
-        info = new char[info_size](); // создаем пустой  массив данных
+        info = new char[info_size]();            // создаем пустой  массив данных
 
         file.seekg(0, ios::beg);
         file.read(info, file_size);
-        cout << info << "\n";
         file.close();
         return info;
     }
