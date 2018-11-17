@@ -13,6 +13,8 @@ void keyGeneration(char *initialKey, char **keys);
 
 void IP(char *info);
 
+void f(char *info, char *key);
+
 void IPinvert(char *info);
 
 #endif
