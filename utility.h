@@ -3,8 +3,10 @@
 
 void message();
 
-char *readFile(const char *file_name, int &info_size, int &extra_bytes);
+char *readFile(const char *fileName, int &infoSize, int &extraBytes);
 
-void writeFile(const char *file_name, char *info, int info_size);
+void writeFile(const char *fileName, char *info, int infoSize);
+
+char **keysFormat(char *key1, char *key2, char *key3);
 
 #endif

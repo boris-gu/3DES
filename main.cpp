@@ -2,15 +2,15 @@
 #include <cstring>
 
 #include "utility.h"
-#include "des.h"
+#include "tripledes.h"
 
 using namespace std;
 
 int main(int argc, char *argv[])
 {
     char *info;
-    int info_size = 0;
-    int extra_bytes = 0;
+    int infoSize = 0;
+    int extraBytes = 0;
 
     if (argc == 1)
     {
@@ -20,9 +20,15 @@ int main(int argc, char *argv[])
     {
         if (argc == 6)
         {
-            info = readFile(argv[2], info_size, extra_bytes);
-            DESencode(info, info_size, argv[3]);
-            writeFile(argv[2], info, info_size);
+            info = readFile(argv[2], infoSize, extraBytes);
+            if (info == NULL)
+            {
+                return 0;
+            }
+            char **keys = keysFormat(argv[3], argv[4], argv[5]);
+            tripleDESencode(info, infoSize, keys);
+            cout << "extra bytes: " << extraBytes << "\n";
+            writeFile(argv[2], info, infoSize);
         }
         else
         {
@@ -33,9 +39,15 @@ int main(int argc, char *argv[])
     {
         if (argc == 7)
         {
-            info = readFile(argv[2], info_size, extra_bytes);
-            DESdecode(info, info_size, argv[3]);
-            writeFile(argv[2], info, info_size);
+            info = readFile(argv[2], infoSize, extraBytes);
+            if (info == NULL)
+            {
+                return 0;
+            }
+            char **keys = keysFormat(argv[3], argv[4], argv[5]);
+            tripleDESdecode(info, infoSize, keys);
+            extraBytes = atoi(argv[6]);
+            writeFile(argv[2], info, infoSize - extraBytes);
         }
         else
         {
@@ -44,7 +56,6 @@ int main(int argc, char *argv[])
     }
     else
     {
-        cout << argv[1];
         message();
     }
     return 0;

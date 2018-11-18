@@ -9,39 +9,78 @@ using namespace std;
 void message()
 {
     cout << "./lab2 -e [file] [key1] [key2] [key3]\n";
-    cout << "./lab2 -d [file] [extra bytes] [key1] [key2] [key3]\n";
+    cout << "./lab2 -d [file] [key1] [key2] [key3] [extra bytes]\n";
 }
 
-char *readFile(const char *file_name, int &info_size, int &extra_bytes)
+char *readFile(const char *fileName, int &infoSize, int &extraBytes)
 {
-    ifstream file(file_name, ios::binary);
+    ifstream file(fileName, ios::binary);
     if (!file)
     {
-        cout << "file " << file_name << " not found\n";
+        cout << "file " << fileName << " not found\n";
+        return NULL;
     }
     else
     {
         char *info;
-        int file_size;
+        int fileSize;
         file.seekg(0, ios::end);
-        file_size = file.tellg();                // записываем размер файла
-        extra_bytes = (8 - (file_size % 8)) % 8; // узнаем кол-во доп. байтов
-        info_size = file_size + extra_bytes;     // записываем размер информации
-        info = new char[info_size]();            // создаем пустой  массив данных
+        fileSize = file.tellg();               // записываем размер файла
+        extraBytes = (8 - (fileSize % 8)) % 8; // узнаем кол-во доп. байтов
+        infoSize = fileSize + extraBytes;      // записываем размер информации
+        info = new char[infoSize]();           // создаем пустой  массив данных
 
         file.seekg(0, ios::beg);
-        file.read(info, file_size);
+        file.read(info, fileSize);
         file.close();
         return info;
     }
 }
 
-void writeFile(const char *file_name, char *info, int info_size)
+void writeFile(const char *fileName, char *info, int infoSize)
 {
-    char out_file_name[260] = "out_"; // формируем имя выходного файла
-    strcat(out_file_name, file_name);
+    char outFileName[260] = "out_"; // формируем имя выходного файла
+    strcat(outFileName, fileName);
 
-    ofstream file(out_file_name, ios::binary);
-    file.write(info, info_size);
+    ofstream file(outFileName, ios::binary);
+    file.write(info, infoSize);
     file.close();
+}
+
+char **keysFormat(char *key1, char *key2, char *key3)
+{
+    char **rtrn = new char *[3]; // массив ключей
+    for (int i = 0; i < 3; i++)
+    {
+        rtrn[i] = new char[8];
+    }
+
+    int i;
+    for (i = 0; i < 8 && key1[i] != '\0'; i++) // 1-й ключ
+    {
+        rtrn[0][i] = key1[i];
+    }
+    for (; i < 8; i++)
+    {
+        rtrn[0][i] = 'A';
+    }
+
+    for (i = 0; i < 8 && key2[i] != '\0'; i++) // 2-й ключ
+    {
+        rtrn[1][i] = key2[i];
+    }
+    for (; i < 8; i++)
+    {
+        rtrn[1][i] = 'B';
+    }
+
+    for (i = 0; i < 8 && key3[i] != '\0'; i++) // 3-й ключ
+    {
+        rtrn[2][i] = key3[i];
+    }
+    for (; i < 8; i++)
+    {
+        rtrn[2][i] = 'C';
+    }
+    return rtrn;
 }

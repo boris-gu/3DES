@@ -3,8 +3,15 @@
 
 using namespace std;
 
-void DESencode(char *info, int info_size, char *key)
+void DESencode(char *info, int infoSize, char *key)
 {
+    cout << "key: ";
+    for (int i = 0; i < 8; i++)
+    {
+        cout << key[i];
+    }
+    cout << "\n";
+
     // ГЕНЕРАЦИЯ КЛЮЧЕЙ ПО 48 БИТ
     char **keys = new char *[16];
     for (int i = 0; i < 16; i++)
@@ -14,87 +21,79 @@ void DESencode(char *info, int info_size, char *key)
     keyGeneration(key, keys);
 
     // РАЗДЕЛЕНИЕ НА БЛОКИ ПО 64 БИТ
-    int info_blocks_size = info_size / 8;
-    char **info_blocks = new char *[info_blocks_size];
-    for (int i = 0; i < info_blocks_size; i++)
+    int infoBlocksSize = infoSize / 8;
+    char **infoBlocks = new char *[infoBlocksSize];
+    for (int i = 0; i < infoBlocksSize; i++)
     {
-        info_blocks[i] = new char[8];
+        infoBlocks[i] = new char[8];
         for (int j = 0; j < 8; j++)
         {
-            info_blocks[i][j] = info[(i * 8) + j];
+            infoBlocks[i][j] = info[(i * 8) + j];
         }
     }
 
-    // ВЫВОД
-    for (int i = 0; i < info_blocks_size; i++)
-    {
-        cout << "\"";
-        for (int j = 0; j < 8; j++)
-        {
-            cout << info_blocks[i][j];
-        }
-        cout << "\"\n";
-    }
-    cout << "\n";
-
-    // ФОРМИРОВАНИЕ Li+1
+    // РЕАЛИЗАЦИЯ DES
     char utilRi[4];
-    for (int i = 0; i < info_blocks_size; i++)
+    for (int i = 0; i < infoBlocksSize; i++)
     {
-        IP(info_blocks[i]);          // начальная перестановка
+        IP(infoBlocks[i]);           // начальная перестановка
         for (int j = 0; j < 16; j++) // 16 проходов функции Фейстеля и XOR
         {
             for (int k = 0; k < 4; k++) // запоминаем R в вспомогательный массив
             {
-                utilRi[k] = info_blocks[i][4 + k];
+                utilRi[k] = infoBlocks[i][4 + k];
             }
             f(utilRi, keys[j]);         // функция Фейстеля
             for (int k = 0; k < 4; k++) // L XOR f
             {
-                utilRi[k] = utilRi[k] ^ info_blocks[i][k];
+                utilRi[k] = utilRi[k] ^ infoBlocks[i][k];
             }
             for (int k = 0; k < 4; k++) // R ставим первым
             {
-                info_blocks[i][k] = info_blocks[i][k + 4];
+                infoBlocks[i][k] = infoBlocks[i][k + 4];
             }
             for (int k = 0; k < 4; k++) // L XOR f ставим вторым
             {
-                info_blocks[i][k + 4] = utilRi[k];
+                infoBlocks[i][k + 4] = utilRi[k];
             }
         }
-        IPinvert(info_blocks[i]); // конечная перестановка
+        IPinvert(infoBlocks[i]); // конечная перестановка
     }
 
-    // ВЫВОД
-    for (int i = 0; i < info_blocks_size; i++)
-    {
-        cout << "[";
-        for (int j = 0; j < 8; j++)
-        {
-            cout << info_blocks[i][j];
-        }
-        cout << "]\n";
-    }
-    cout << "\n";
-
-    for (int i = 0; i < info_blocks_size; i++)
+    // ЗАПИСЬ
+    for (int i = 0; i < infoBlocksSize; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            info[(i * 8) + j] = info_blocks[i][j];
+            info[(i * 8) + j] = infoBlocks[i][j];
         }
     }
 
     // ОСВОБОЖДЕНИЕ ПАМЯТИ
-    for (int i = 0; i < info_blocks_size; i++)
+    for (int i = 0; i < 16; i++)
     {
-        delete[] info_blocks[i];
+        delete[] keys[i];
     }
-    delete[] info_blocks;
+    delete[] keys;
+    for (int i = 0; i < infoBlocksSize; i++)
+    {
+        delete[] infoBlocks[i];
+    }
+    delete[] infoBlocks;
+
+    cout << "encryption completed\n";
 }
 
-void DESdecode(char *info, int info_size, char *key)
-{ // ГЕНЕРАЦИЯ КЛЮЧЕЙ ПО 48 БИТ
+void DESdecode(char *info, int infoSize, char *key)
+{
+    cout << "key: ";
+    for (int i = 0; i < 8; i++)
+    {
+        cout << key[i];
+    }
+    cout << "\n";
+
+    // ГЕНЕРАЦИЯ КЛЮЧЕЙ ПО 48 БИТ
     char **keys = new char *[16];
     for (int i = 0; i < 16; i++)
     {
@@ -103,92 +102,75 @@ void DESdecode(char *info, int info_size, char *key)
     keyGeneration(key, keys);
 
     // РАЗДЕЛЕНИЕ НА БЛОКИ ПО 64 БИТ
-    int info_blocks_size = info_size / 8;
-    char **info_blocks = new char *[info_blocks_size];
-    for (int i = 0; i < info_blocks_size; i++)
+    int infoBlocksSize = infoSize / 8;
+    char **infoBlocks = new char *[infoBlocksSize];
+    for (int i = 0; i < infoBlocksSize; i++)
     {
-        info_blocks[i] = new char[8];
+        infoBlocks[i] = new char[8];
         for (int j = 0; j < 8; j++)
         {
-            info_blocks[i][j] = info[(i * 8) + j];
+            infoBlocks[i][j] = info[(i * 8) + j];
         }
     }
-
-    // ВЫВОД
-    for (int i = 0; i < info_blocks_size; i++)
-    {
-        cout << "\"";
-        for (int j = 0; j < 8; j++)
-        {
-            cout << info_blocks[i][j];
-        }
-        cout << "\"\n";
-    }
-    cout << "\n";
 
     // ФОРМИРОВАНИЕ Li+1
     char utilRi[4];
-    for (int i = 0; i < info_blocks_size; i++)
+    for (int i = 0; i < infoBlocksSize; i++)
     {
-        IP(info_blocks[i]);          // начальная перестановка
+        IP(infoBlocks[i]);           // начальная перестановка
         for (int j = 0; j < 16; j++) // 16 проходов функции Фейстеля и XOR
         {
             for (int k = 0; k < 4; k++) // запоминаем L в вспомогательный массив
             {
-                utilRi[k] = info_blocks[i][k];
+                utilRi[k] = infoBlocks[i][k];
             }
             f(utilRi, keys[15 - j]);    // функция Фейстеля
             for (int k = 0; k < 4; k++) // R XOR f
             {
-                utilRi[k] = utilRi[k] ^ info_blocks[i][4 + k];
+                utilRi[k] = utilRi[k] ^ infoBlocks[i][4 + k];
             }
             for (int k = 0; k < 4; k++) // L ставим вторым
             {
-                info_blocks[i][4 + k] = info_blocks[i][k];
+                infoBlocks[i][4 + k] = infoBlocks[i][k];
             }
             for (int k = 0; k < 4; k++) // L XOR f ставим вторым
             {
-                info_blocks[i][k] = utilRi[k];
+                infoBlocks[i][k] = utilRi[k];
             }
         }
-        IPinvert(info_blocks[i]); // конечная перестановка
+        IPinvert(infoBlocks[i]); // конечная перестановка
     }
 
-    // ВЫВОД
-    for (int i = 0; i < info_blocks_size; i++)
-    {
-        cout << "[";
-        for (int j = 0; j < 8; j++)
-        {
-            cout << info_blocks[i][j];
-        }
-        cout << "]\n";
-    }
-    cout << "\n";
-
-    for (int i = 0; i < info_blocks_size; i++)
+    for (int i = 0; i < infoBlocksSize; i++)
     {
         for (int j = 0; j < 8; j++)
         {
-            info[(i * 8) + j] = info_blocks[i][j];
+            info[(i * 8) + j] = infoBlocks[i][j];
         }
     }
 
     // ОСВОБОЖДЕНИЕ ПАМЯТИ
-    for (int i = 0; i < info_blocks_size; i++)
+    for (int i = 0; i < 16; i++)
     {
-        delete[] info_blocks[i];
+        delete[] keys[i];
     }
-    delete[] info_blocks;
+    delete[] keys;
+    for (int i = 0; i < infoBlocksSize; i++)
+    {
+        delete[] infoBlocks[i];
+    }
+    delete[] infoBlocks;
+
+    cout << "decryption complete\n";
 }
 
 int getBit(char *info, int num)
 {
-    --num;                     // переходим к счету с 0
-    int num_char = num / 8;    // номер символа
-    int rtrn = info[num_char]; // нужный символ
+    --num;                    // переходим к счету с 0
+    int numChar = num / 8;    // номер символа
+    int rtrn = info[numChar]; // нужный символ
     // ФОРМИРУЕМ СДВИГ
-    int move = 7 - (num - (num_char * 8));
+    int move = 7 - (num - (numChar * 8));
     // ПРИМЕНЯЕМ СДВИГ И МАСКУ 0000 0001
     rtrn = (rtrn >> move) & 1;
     return rtrn;
@@ -203,20 +185,20 @@ void setBit(char *info, int num, int value)
         rtrn[i] = info[i];
     }
 
-    --num;                  // переходим к счету с 0
-    int num_char = num / 8; // номер символа
+    --num;                 // переходим к счету с 0
+    int numChar = num / 8; // номер символа
     // ФОРМИРУЕМ МАСКУ
-    int mask = 1 << (7 - (num - (num_char * 8)));
+    int mask = 1 << (7 - (num - (numChar * 8)));
     if (value == 1)
     {
         // ПРИМЕНЯЕМ МАСКУ
-        info[num_char] = rtrn[num_char] | mask;
+        info[numChar] = rtrn[numChar] | mask;
     }
     else if (value == 0)
     {
         // ИНВЕРТИРУЕМ МАСКУ И ПРИМЕНЯЕМ
         mask = ~mask;
-        info[num_char] = rtrn[num_char] & mask;
+        info[numChar] = rtrn[numChar] & mask;
     }
 }
 
@@ -250,14 +232,6 @@ void keyGeneration(char *initialKey, char **rtrnKeys)
         setBit(utilKey, i, getBit(extendedKey, table5[i - 1]));
     }
 
-    /* for (int i = 1; i <= 56; i++)
-    {
-        cout << getBit(utilKey, i);
-        if (i % 7 == 0)
-            cout << "  ";
-    }
-    cout << "\n"; */
-
     // СДВИГИ ДВУХ ПОЛОВИН КЛЮЧА, ФОРМИРОВАНИЕ ПОДКЛЮЧЕЙ
     const int table6[16] = {1, 2, 4, 6, 8, 10, 12, 14, 15, 17, 19, 21, 23, 25, 27, 28};
     char utilKeys[16][7]; // вспомогательная, запоминаем сдвиги
@@ -286,18 +260,6 @@ void keyGeneration(char *initialKey, char **rtrnKeys)
             setBit(rtrnKeys[i], j, getBit(utilKeys[i], table7[j - 1]));
         }
     }
-
-    /* cout << '\n';
-    for (int j = 0; j < 16; j++)
-    {
-        for (int i = 1; i <= 48; i++)
-        {
-            cout << getBit(rtrnKeys[j], i);
-            if (i % 7 == 0)
-                cout << "  ";
-        }
-        cout << "\n";
-    } */
 }
 
 void IP(char *info)
@@ -400,15 +362,6 @@ void f(char *info, char *key)
         setBit(narrowedR, (i * 4) + 3, getBit((char *)&util4Bit, 7));
         setBit(narrowedR, (i * 4) + 4, getBit((char *)&util4Bit, 8));
     }
-
-    /* cout << "\n";
-    for (int i = 1; i <= 32; i++)
-    {
-        cout << getBit(narrowedR, i);
-        if (i % 4 == 0)
-            cout << " ";
-    }
-    cout << "\n"; */
 
     // ПЕРЕСТАНОВКА P
     const int table4[32] = {16, 7, 20, 21, 29, 12, 28, 17,

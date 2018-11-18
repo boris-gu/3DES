@@ -1,9 +1,9 @@
 #ifndef des_h
 #define des_h
 
-void DESencode(char *info, int info_size, char *key);
+void DESencode(char *info, int infoSize, char *key);
 
-void DESdecode(char *info, int info_size, char *key);
+void DESdecode(char *info, int infoSize, char *key);
 
 int getBit(char *info, int num);
 
