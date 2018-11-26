@@ -10,7 +10,6 @@ int main(int argc, char *argv[])
 {
     char *info;
     int infoSize = 0;
-    int extraBytes = 0;
 
     if (argc == 1)
     {
@@ -20,15 +19,14 @@ int main(int argc, char *argv[])
     {
         if (argc == 6)
         {
-            info = readFile(argv[2], infoSize, extraBytes);
+            info = readFile(argv[2], infoSize, true);
             if (info == NULL)
             {
                 return 0;
             }
             char **keys = keysFormat(argv[3], argv[4], argv[5]);
             tripleDESencode(info, infoSize, keys);
-            cout << "extra bytes: " << extraBytes << "\n";
-            writeFile(argv[2], info, infoSize);
+            writeFile(argv[2], info, infoSize, false);
         }
         else
         {
@@ -37,17 +35,16 @@ int main(int argc, char *argv[])
     }
     else if (!strcmp(argv[1], "-d"))
     {
-        if (argc == 7)
+        if (argc == 6)
         {
-            info = readFile(argv[2], infoSize, extraBytes);
+            info = readFile(argv[2], infoSize, false);
             if (info == NULL)
             {
                 return 0;
             }
             char **keys = keysFormat(argv[3], argv[4], argv[5]);
             tripleDESdecode(info, infoSize, keys);
-            extraBytes = atoi(argv[6]);
-            writeFile(argv[2], info, infoSize - extraBytes);
+            writeFile(argv[2], info, infoSize, true);
         }
         else
         {

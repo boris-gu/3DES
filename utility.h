@@ -3,9 +3,9 @@
 
 void message();
 
-char *readFile(const char *fileName, int &infoSize, int &extraBytes);
+char *readFile(const char *fileName, int &infoSize, bool encode);
 
-void writeFile(const char *fileName, char *info, int infoSize);
+void writeFile(const char *fileName, char *info, int infoSize, bool decode);
 
 char **keysFormat(char *key1, char *key2, char *key3);
 

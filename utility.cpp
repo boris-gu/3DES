@@ -9,10 +9,10 @@ using namespace std;
 void message()
 {
     cout << "./lab2 -e [file] [key1] [key2] [key3]\n";
-    cout << "./lab2 -d [file] [key1] [key2] [key3] [extra bytes]\n";
+    cout << "./lab2 -d [file] [key1] [key2] [key3]\n";
 }
 
-char *readFile(const char *fileName, int &infoSize, int &extraBytes)
+char *readFile(const char *fileName, int &infoSize, bool encode)
 {
     ifstream file(fileName, ios::binary);
     if (!file)
@@ -25,10 +25,23 @@ char *readFile(const char *fileName, int &infoSize, int &extraBytes)
         char *info;
         int fileSize;
         file.seekg(0, ios::end);
-        fileSize = file.tellg();               // записываем размер файла
-        extraBytes = (8 - (fileSize % 8)) % 8; // узнаем кол-во доп. байтов
-        infoSize = fileSize + extraBytes;      // записываем размер информации
-        info = new char[infoSize]();           // создаем пустой  массив данных
+        fileSize = file.tellg(); // записываем размер файла
+        if (encode)
+        {
+            int extraBytes = (8 - (fileSize % 8)) % 8; // узнаем кол-во доп. байтов
+            if (extraBytes == 0)
+            {
+                extraBytes = 8;
+            }
+            infoSize = fileSize + extraBytes; // записываем размер информации
+            info = new char[infoSize]();      // создаем пустой  массив данных
+            info[fileSize] = 1;
+        }
+        else
+        {
+            infoSize = fileSize;
+            info = new char[infoSize]();
+        }
 
         file.seekg(0, ios::beg);
         file.read(info, fileSize);
@@ -37,10 +50,22 @@ char *readFile(const char *fileName, int &infoSize, int &extraBytes)
     }
 }
 
-void writeFile(const char *fileName, char *info, int infoSize)
+void writeFile(const char *fileName, char *info, int infoSize, bool decode)
 {
     char outFileName[260] = "out_"; // формируем имя выходного файла
     strcat(outFileName, fileName);
+
+    if (decode) // избавляемся от лишний байт
+    {
+        for (int i = infoSize - 1; i >= 0; i--)
+        {
+            if (info[i] == 1)
+            {
+                infoSize = i;
+                break;
+            }
+        }
+    }
 
     ofstream file(outFileName, ios::binary);
     file.write(info, infoSize);
@@ -71,7 +96,7 @@ char **keysFormat(char *key1, char *key2, char *key3)
     }
     for (; i < 8; i++)
     {
-        rtrn[1][i] = 'B';
+        rtrn[1][i] = 'A';
     }
 
     for (i = 0; i < 8 && key3[i] != '\0'; i++) // 3-й ключ
@@ -80,7 +105,7 @@ char **keysFormat(char *key1, char *key2, char *key3)
     }
     for (; i < 8; i++)
     {
-        rtrn[2][i] = 'C';
+        rtrn[2][i] = 'A';
     }
     return rtrn;
 }
