@@ -109,3 +109,41 @@ char **keysFormat(char *key1, char *key2, char *key3)
     }
     return rtrn;
 }
+
+int getBit(char *info, int num)
+{
+    --num;                    // переходим к счету с 0
+    int numChar = num / 8;    // номер символа
+    int rtrn = info[numChar]; // нужный символ
+    // ФОРМИРУЕМ СДВИГ
+    int move = 7 - (num - (numChar * 8));
+    // ПРИМЕНЯЕМ СДВИГ И МАСКУ 0000 0001
+    rtrn = (rtrn >> move) & 1;
+    return rtrn;
+}
+
+void setBit(char *info, int num, int value)
+{
+    // ФОРМИРУЕМ ВОЗВРАЩАЕМЫЙ МАССИВ
+    char rtrn[8];
+    for (int i = 0; i < 8; i++)
+    {
+        rtrn[i] = info[i];
+    }
+
+    --num;                 // переходим к счету с 0
+    int numChar = num / 8; // номер символа
+    // ФОРМИРУЕМ МАСКУ
+    int mask = 1 << (7 - (num - (numChar * 8)));
+    if (value == 1)
+    {
+        // ПРИМЕНЯЕМ МАСКУ
+        info[numChar] = rtrn[numChar] | mask;
+    }
+    else if (value == 0)
+    {
+        // ИНВЕРТИРУЕМ МАСКУ И ПРИМЕНЯЕМ
+        mask = ~mask;
+        info[numChar] = rtrn[numChar] & mask;
+    }
+}

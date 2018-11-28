@@ -9,4 +9,8 @@ void writeFile(const char *fileName, char *info, int infoSize, bool decode);
 
 char **keysFormat(char *key1, char *key2, char *key3);
 
+int getBit(char *info, int num);
+
+void setBit(char *info, int num, int value);
+
 #endif

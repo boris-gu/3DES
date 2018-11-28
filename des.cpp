@@ -1,5 +1,6 @@
 #include <iostream>
 #include "des.h"
+#include "utility.h"
 
 using namespace std;
 
@@ -113,7 +114,7 @@ void DESdecode(char *info, int infoSize, char *key)
         }
     }
 
-    // ФОРМИРОВАНИЕ Li+1
+    // РЕАЛИЗАЦИЯ РАСШИФРОВКИ DES
     char utilRi[4];
     for (int i = 0; i < infoBlocksSize; i++)
     {
@@ -141,6 +142,7 @@ void DESdecode(char *info, int infoSize, char *key)
         IPinvert(infoBlocks[i]); // конечная перестановка
     }
 
+    // ЗАПИСЬ
     for (int i = 0; i < infoBlocksSize; i++)
     {
         for (int j = 0; j < 8; j++)
@@ -162,44 +164,6 @@ void DESdecode(char *info, int infoSize, char *key)
     delete[] infoBlocks;
 
     cout << "decryption complete\n";
-}
-
-int getBit(char *info, int num)
-{
-    --num;                    // переходим к счету с 0
-    int numChar = num / 8;    // номер символа
-    int rtrn = info[numChar]; // нужный символ
-    // ФОРМИРУЕМ СДВИГ
-    int move = 7 - (num - (numChar * 8));
-    // ПРИМЕНЯЕМ СДВИГ И МАСКУ 0000 0001
-    rtrn = (rtrn >> move) & 1;
-    return rtrn;
-}
-
-void setBit(char *info, int num, int value)
-{
-    // ФОРМИРУЕМ ВОЗВРАЩАЕМЫЙ МАССИВ
-    char rtrn[8];
-    for (int i = 0; i < 8; i++)
-    {
-        rtrn[i] = info[i];
-    }
-
-    --num;                 // переходим к счету с 0
-    int numChar = num / 8; // номер символа
-    // ФОРМИРУЕМ МАСКУ
-    int mask = 1 << (7 - (num - (numChar * 8)));
-    if (value == 1)
-    {
-        // ПРИМЕНЯЕМ МАСКУ
-        info[numChar] = rtrn[numChar] | mask;
-    }
-    else if (value == 0)
-    {
-        // ИНВЕРТИРУЕМ МАСКУ И ПРИМЕНЯЕМ
-        mask = ~mask;
-        info[numChar] = rtrn[numChar] & mask;
-    }
 }
 
 void keyGeneration(char *initialKey, char **rtrnKeys)
