@@ -77,33 +77,33 @@ char **keysFormat(char *key1, char *key2, char *key3)
     char **rtrn = new char *[3]; // массив ключей
     for (int i = 0; i < 3; i++)
     {
-        rtrn[i] = new char[8];
+        rtrn[i] = new char[7];
     }
 
     int i;
-    for (i = 0; i < 8 && key1[i] != '\0'; i++) // 1-й ключ
+    for (i = 0; i < 7 && key1[i] != '\0'; i++) // 1-й ключ
     {
         rtrn[0][i] = key1[i];
     }
-    for (; i < 8; i++)
+    for (; i < 7; i++)
     {
         rtrn[0][i] = 'A';
     }
 
-    for (i = 0; i < 8 && key2[i] != '\0'; i++) // 2-й ключ
+    for (i = 0; i < 7 && key2[i] != '\0'; i++) // 2-й ключ
     {
         rtrn[1][i] = key2[i];
     }
-    for (; i < 8; i++)
+    for (; i < 7; i++)
     {
         rtrn[1][i] = 'A';
     }
 
-    for (i = 0; i < 8 && key3[i] != '\0'; i++) // 3-й ключ
+    for (i = 0; i < 7 && key3[i] != '\0'; i++) // 3-й ключ
     {
         rtrn[2][i] = key3[i];
     }
-    for (; i < 8; i++)
+    for (; i < 7; i++)
     {
         rtrn[2][i] = 'A';
     }
