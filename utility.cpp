@@ -28,13 +28,9 @@ char *readFile(const char *fileName, int &infoSize, bool encode)
         fileSize = file.tellg(); // записываем размер файла
         if (encode)
         {
-            int extraBytes = (8 - (fileSize % 8)) % 8; // узнаем кол-во доп. байтов
-            if (extraBytes == 0)
-            {
-                extraBytes = 8;
-            }
-            infoSize = fileSize + extraBytes; // записываем размер информации
-            info = new char[infoSize]();      // создаем пустой  массив данных
+            int extraBytes = 8 - (fileSize % 8); // узнаем кол-во доп. байтов
+            infoSize = fileSize + extraBytes;    // записываем размер информации
+            info = new char[infoSize]();         // создаем пустой  массив данных
             info[fileSize] = 1;
         }
         else
